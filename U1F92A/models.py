@@ -3,20 +3,20 @@ from django.utils import timezone
 
 
 class Photo(models.Model):
-    url = models.CharField(max_length=1000)
+    url = models.CharField(max_length=10000)
     time_created = models.DateTimeField('Date created')
 
     def __str__(self):
-        return self.pk
+        return str(self.pk)
 
 
 class User(models.Model):
     photo = models.ForeignKey(Photo, on_delete=models.CASCADE)
     time_created = models.DateTimeField('date created')
     last_active = models.DateTimeField('last active date')
-    
+
     def __str__(self):
-        return self.pk
+        return str(self.pk)
 
 
 class Message(models.Model):

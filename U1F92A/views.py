@@ -6,7 +6,7 @@ from django.utils import timezone
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at polls index.")
+    return HttpResponse("Home Page")
 
 
 class UserView(View):
@@ -15,13 +15,13 @@ class UserView(View):
     """
 
     @staticmethod
-    def register(uphoto):
+    def register(request, uphoto):
         """
         on create - last_activated is the current time.
         :param uphoto: Photo (U1F92A.models)
         :return: None
         """
-        # upload_img(uphoto)
+        PhotoView.upload_img(request, uphoto)
         new_user = User(
             photo=uphoto,
             time_created=timezone.now(),
@@ -30,7 +30,7 @@ class UserView(View):
         new_user.save()
 
     @staticmethod
-    def update_last_active(pk_num):
+    def update_last_active(request, pk_num):
         """
         updating the last_active user attribute
         :param pk_num: int (id/pk number)
@@ -40,7 +40,7 @@ class UserView(View):
         user.last_active = timezone.now()
 
     @staticmethod
-    def get_all_users():
+    def get_all_users(request):
         """
         Returning all users list
         :return: list
@@ -48,7 +48,7 @@ class UserView(View):
         return User.objects.all()
 
     @staticmethod
-    def get_user(pk_num):
+    def get_user(request, pk_num):
         return User.objects.get(pk=pk_num)
 
 
@@ -58,12 +58,35 @@ class PhotoView(View):
     """
 
     @staticmethod
-    def get_photo(img_pk):
+    def get_photo(request, img_pk):
         return Photo.objects.get(pk=img_pk)
 
-    # @staticmethod
-    # def upload_img(url):
-    # Rotem will take care
+    @staticmethod
+    def upload_img(request, photo_url):
+        img = Photo(
+            url=photo_url,
+            time_created=timezone.now()
+        )
+        img.save()
+        return HttpResponse("created!")
+
+    @staticmethod
+    def display_all_photos(request):
+        all_photos = Photo.objects.all()
+        html = ''
+        for photo in all_photos:
+            url = str(photo.pk) + '/'
+            html += '<a href="' + url + '"><img src="' + photo.url + \
+                    '"></img></a><br>'
+        return HttpResponse(html)
+
+    @staticmethod
+    def details_photo(request, photo_pk):
+        return HttpResponse(
+            "<h2>Details for Photo number: " + str(photo_pk) +
+            ". <br> Date created: " +
+            str(PhotoView.get_photo(request, photo_pk).time_created)+ ".</h2>"
+        )
 
 
 class MessageView(View):
@@ -72,25 +95,20 @@ class MessageView(View):
     """
 
     @staticmethod
-    def create_new_message(sender_pk, reciever_pk, photo_pk, text_str):
+    def create_new_message(request, sender_pk, reciever_pk, photo_pk, text_str):
         msg = Message(
-            sender=UserView.get_user(sender_pk),
-            reciever=UserView.get_user(reciever_pk),
-            content_photo=PhotoView.get_photo(photo_pk),
+            sender=UserView.get_user(request, sender_pk),
+            reciever=UserView.get_user(request, reciever_pk),
+            content_photo=PhotoView.get_photo(request, photo_pk),
             content_text=text_str, # emoji...
             send_time=timezone.now()
         )
         msg.save()
 
     @staticmethod
-    def get_all_messages():
+    def get_all_messages(request):
         return Message.objects.all()
 
     @staticmethod
-    def get_message(pk_msg):
+    def get_message(requset, pk_msg):
         return Message.objects.get(pk=pk_msg)
-
-
-
-
-
