@@ -80,11 +80,12 @@ class MessageView(View):
             content_text=text_str, # emoji...
             send_time=timezone.now()
         )
+        msg.save()
 
     @staticmethod
     def get_all_messages():
         return Message.objects.all()
-    
+
     @staticmethod
     def get_message(pk_msg):
         return Message.objects.get(pk=pk_msg)
