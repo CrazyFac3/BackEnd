@@ -24,7 +24,7 @@ class Message(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE,
                                  related_name='maps')
     content_photo = models.ForeignKey(Photo, on_delete=models.CASCADE)
-    content_text = models.CharField(max_length=1000)
+    content_text = models.CharField(max_length=1000)  # emoji
     send_time = models.DateTimeField('date sent')
 
     def __str__(self):
@@ -32,9 +32,3 @@ class Message(models.Model):
             return "Photo Message " + str(self.pk)
         else:
             return "Text Message " + str(self.pk)
-
-
-
-
-
-

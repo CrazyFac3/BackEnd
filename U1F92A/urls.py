@@ -24,5 +24,6 @@ urlpatterns = [
         'Photo/<path:photo_url>',
         views.PhotoView.upload_img,
         name="upload_img"
-    )
+    ),
+
 ]

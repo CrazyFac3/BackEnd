@@ -18,16 +18,23 @@ class UserView(View):
     def register(request, uphoto):
         """
         on create - last_activated is the current time.
-        :param uphoto: Photo (U1F92A.models)
+        :param uphoto: url (base64)
         :return: None
         """
-        PhotoView.upload_img(request, uphoto)
+        img = Photo(
+            url=uphoto,
+            time_created=timezone.now()
+        )
+        img.save()
+
         new_user = User(
-            photo=uphoto,
+            photo=img,
             time_created=timezone.now(),
             last_active=timezone.now()
         )
         new_user.save()
+
+        return HttpResponse("User created. PK of user: {0}. PK of photo: {1}".format(str(img.pk), str(new_user.pk)))
 
     @staticmethod
     def update_last_active(request, pk_num):
@@ -100,7 +107,7 @@ class MessageView(View):
             sender=UserView.get_user(request, sender_pk),
             reciever=UserView.get_user(request, reciever_pk),
             content_photo=PhotoView.get_photo(request, photo_pk),
-            content_text=text_str, # emoji...
+            content_text=text_str, # emojis...
             send_time=timezone.now()
         )
         msg.save()
