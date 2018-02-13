@@ -6,7 +6,7 @@ from django.utils import timezone
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at polls index.")
+    return HttpResponse("Hello world. You're at polls index.")
 
 
 class UserView(View):
