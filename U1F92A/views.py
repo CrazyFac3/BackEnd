@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.views import View
 from .models import *
 from django.utils import timezone
@@ -49,10 +50,15 @@ class UserView(View):
     @staticmethod
     def get_all_users(request):
         """
-        Returning all users list
-        :return: list
+        :return: All users in a json
+        :rtype: JsonResponse
         """
-        return User.objects.all()
+        users = User.objects.all().values('photo', 'time_created',
+                                          'last_active')
+        users = list(users)
+        response = JsonResponse(users, safe=False)
+
+        return response
 
     @staticmethod
     def get_user(request, pk_num):
