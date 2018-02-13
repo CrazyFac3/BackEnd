@@ -32,3 +32,5 @@ class Message(models.Model):
             return "Photo Message " + str(self.pk)
         else:
             return "Text Message " + str(self.pk)
+
+# final
