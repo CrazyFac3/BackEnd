@@ -22,7 +22,7 @@ class UserView(View):
         :return: None
         """
         img = Photo(
-            url=uphoto,
+            base64=uphoto,
             time_created=timezone.now()
         )
         img.save()
@@ -34,7 +34,8 @@ class UserView(View):
         )
         new_user.save()
 
-        return HttpResponse("User created. PK of user: {0}. PK of photo: {1}".format(str(img.pk), str(new_user.pk)))
+        return HttpResponse("User created. PK of user: {0}. PK of photo: {1}".
+                            format(str(img.pk), str(new_user.pk)))
 
     @staticmethod
     def update_last_active(request, pk_num):
@@ -83,7 +84,7 @@ class PhotoView(View):
         html = ''
         for photo in all_photos:
             url = str(photo.pk) + '/'
-            html += '<a href="' + url + '"><img src="' + photo.url + \
+            html += '<a href="' + url + '"><img src="' + photo.base64 + \
                     '"></img></a><br>'
         return HttpResponse(html)
 

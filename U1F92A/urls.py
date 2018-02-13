@@ -21,9 +21,11 @@ urlpatterns = [
 
     # /U1F92A/Photo/img_url/  --> upload a new image to the database.
     path(
-        'Photo/<path:photo_url>',
+        'Photo/<path:photo_base64>',
         views.PhotoView.upload_img,
         name="upload_img"
     ),
+
+    # /U1F92A/User/.....................
 
 ]
