@@ -38,7 +38,7 @@ urlpatterns = [
         'User/<int:user_pk>/',
         views.UserView.display_user,
         name="display_user"
-    )
+    ),
 
     # /U1F92A/User/  --> gives all users in a json.
     path(
