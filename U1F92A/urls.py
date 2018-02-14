@@ -40,4 +40,11 @@ urlpatterns = [
         name="display_user"
     )
 
+    # /U1F92A/User/  --> gives all users in a json.
+    path(
+        'User/',
+        views.UserView.get_all_users,
+        name="get_all_users"
+    ),
+
 ]
