@@ -109,8 +109,21 @@ class PhotoView(View):
         return HttpResponse(
             "<h2>Details for Photo number: " + str(photo_pk) +
             ". <br> Date created: " +
-            str(PhotoView.get_photo(request, photo_pk).time_created)+ ".</h2>"
+            str(PhotoView.get_photo(request, photo_pk).time_created) + ".</h2>"
         )
+
+    @staticmethod
+    def get_all_images(request):
+        """
+        :return: All users in a json
+        :rtype: JsonResponse
+        """
+        images = Photo.objects.all().values('photo', 'time_created',
+                                            'last_active')
+        images = list(images)
+        response = JsonResponse(images, safe=False)
+
+        return response
 
 
 class MessageView(View):
@@ -124,7 +137,7 @@ class MessageView(View):
             sender=UserView.get_user(request, sender_pk),
             reciever=UserView.get_user(request, reciever_pk),
             content_photo=PhotoView.get_photo(request, photo_pk),
-            content_text=text_str, # emojis...
+            content_text=text_str,  # emojis...
             send_time=timezone.now()
         )
         msg.save()
