@@ -9,7 +9,7 @@ In order to set up the venv navigate to the project's folder:
 for linux:
 `source bin/activate`
 for windows:
-`%HOMEPATH%\eb-virt\Scripts\activate`
+`Scripts\activate.bat`
 
 
 If you want for example to run manage.py on linux:
