@@ -16,14 +16,14 @@ class UserView(View):
     """
 
     @staticmethod
-    def register(request, uphoto):
+    def register(request, photo_base64):
         """
         on create - last_activated is the current time.
         :param uphoto: url (base64)
         :return: None
         """
         img = Photo(
-            url=uphoto,
+            base64=photo_base64,
             time_created=timezone.now()
         )
         img.save()
@@ -35,7 +35,18 @@ class UserView(View):
         )
         new_user.save()
 
-        return HttpResponse("User created. PK of user: {0}. PK of photo: {1}".format(str(img.pk), str(new_user.pk)))
+        return HttpResponse("User created. PK of user: {0}. PK of photo: {1}".
+                            format(str(new_user.pk), str(img.pk)))
+
+    @staticmethod
+    def display_user(request, user_pk):
+        return HttpResponse(
+            "<h2>Details for User number: " + str(user_pk) +
+            ". <br> Date created: " +
+            str(UserView.get_user(request, user_pk).time_created) +
+            '</h2><br><img src="' + UserView.get_user(request, user_pk).photo.
+            base64 + '"/>.'
+        )
 
     @staticmethod
     def update_last_active(request, pk_num):
@@ -89,7 +100,7 @@ class PhotoView(View):
         html = ''
         for photo in all_photos:
             url = str(photo.pk) + '/'
-            html += '<a href="' + url + '"><img src="' + photo.url + \
+            html += '<a href="' + url + '"><img src="' + photo.base64 + \
                     '"></img></a><br>'
         return HttpResponse(html)
 

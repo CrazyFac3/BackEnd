@@ -3,7 +3,7 @@ from django.utils import timezone
 
 
 class Photo(models.Model):
-    url = models.CharField(max_length=10000)
+    base64 = models.CharField(max_length=10000)
     time_created = models.DateTimeField('Date created')
 
     def __str__(self):
