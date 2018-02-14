@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'CrazyFace.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'DjangoDB'             # Or path to database file if using sqlite3.
+        'NAME': 'DjangoDB',             # Or path to database file if using sqlite3.
         'USER': 'commander',
         'PASSWORD': os.getenv('PAZAMPAZAM'),
         'HOST': 'crazyface-1.cptcudnntmfs.us-east-2.rds.amazonaws.com',                 # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
