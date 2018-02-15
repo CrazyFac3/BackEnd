@@ -1,19 +1,37 @@
-# How to work with Virtual Environment
-When you work on the project you should work with virtual environment. virtual environment enables you to make sure you are using the exact same libraries as the rest
-of the team. The 'bin' folder contains the python version and all the libraries used in the project.
-## How to use Virtual Environment
-If you want for example to run manage.py, make sure you are running it from the venv (virtual environment). 
-In order to Run your code from the virtual environment.
+# CrazyFac3 BackEnd 🤪
+The CrazyFac3 BackEnd team is responsible for developing all the server-side in CrazyFac3 app. The server side is
+implemented using django framework and hosted by AWS Elastic Beanstalk service.
+## How to work with Virtual Environment
+Let's say you are working on the project and... Oops! You don't know which packages you need in order to run the project.
+That is exactly why we use virtual environment. 
+Virtual environment enables you to make sure you are using the exact same libraries as the rest
+of the team. The 'bin' and 'Scripts' folders contain the python interpreter and all the libraries used in the project.
+### How to use Virtual Environment
+Let's say you are now working on the project and you want to run a file. Virtualenv makes sure you are running the file with all
+the needed libraries to make it work as expected.
 
-In order to set up the venv navigate to the project's folder:
-for linux:
+In order to use the virtualenv you will have to **activate** every time you are working on the cmd/terminal
+activation for linux:
 `source bin/activate`
-for windows:
+
+
+activation for windows:
 `Scripts\activate.bat`
 
 
-If you want for example to run manage.py on linux:
+If you want for example to run manage.py on **Unix**:
 ```
-User:~/Projects/GithubProjects/BackEnd$ source bin/activate
-(BackEnd) User:~/Projects/GithubProjects/BackEnd$ python manage.py runserver
+User:~/Projects/BackEnd$ source bin/activate
+(BackEnd) User:~/Projects/BackEnd$ python manage.py runserver
 ```
+
+
+If you want for example to run manage.py on **Windows**:
+```
+C:\Users\user\Projects\BackEnd>Scripts\activate
+(BackEnd) C:\Users\user\Projects\BackEnd>python manage.py runserver 
+```
+
+As you can see, in both unix and windows, after activated venv there will be brackets with the name
+of the folder in which you are in. that tells you that you are currently working from the venv on this folder.
+
