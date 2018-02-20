@@ -149,3 +149,14 @@ class MessageView(View):
     @staticmethod
     def get_message(requset, pk_msg):
         return Message.objects.get(pk=pk_msg)
+
+    @staticmethod
+    def get_messages(request, user_id, friend_id):
+        msg_list = Message.object.all()
+        msgs_list_final = []
+        for message in msg_list:
+            if user_id == message.sender.id and friend_id == message.receiver.id or \
+                                    user_id == message.reciever.id and friend_id == \
+                                    message.sender.id:
+                msgs_list_final.append(message)
+        return msgs_list_final
