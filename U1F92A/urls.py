@@ -19,7 +19,7 @@ urlpatterns = [
         name="details_photo"
     ),
 
-    # /U1F92A/Photo/photo_base64/  --> upload a new image to the database.
+    # /U1F92A/Photo/photo_base64  --> upload a new image to the database.
     path(
         'Photo/<path:photo_base64>',
         views.PhotoView.upload_img,

@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.views import View
 from .models import *
 from django.utils import timezone
+from random import randint
 
 
 def index(request):
@@ -75,6 +76,25 @@ class UserView(View):
     def get_user(request, pk_num):
         return User.objects.get(pk=pk_num)
 
+    @staticmethod
+    def get_random_user(request, my_user_pk):
+        """
+        get a random user
+        :param request: the Get request
+        :param my_user_pk: the user requesting pk
+        :return: User
+        """
+        all_users = User.objects.all()
+        len_users = len(all_users)
+        user_pk = my_user_pk
+
+        while user_pk == my_user_pk:
+            final_user = all_users[randint(len_users)]
+            user_pk = final_user.pk
+
+        return UserView.get_user(request, user_pk)
+
+
 
 class PhotoView(View):
     """
@@ -86,9 +106,9 @@ class PhotoView(View):
         return Photo.objects.get(pk=img_pk)
 
     @staticmethod
-    def upload_img(request, photo_url):
+    def upload_img(request, photo_base64):
         img = Photo(
-            url=photo_url,
+            base64=photo_base64,
             time_created=timezone.now()
         )
         img.save()
@@ -106,11 +126,12 @@ class PhotoView(View):
 
     @staticmethod
     def details_photo(request, photo_pk):
-        return HttpResponse(
-            "<h2>Details for Photo number: " + str(photo_pk) +
-            ". <br> Date created: " +
-            str(PhotoView.get_photo(request, photo_pk).time_created) + ".</h2>"
-        )
+            my_http = HttpResponse(
+                "<h2>Details for Photo number: " + str(photo_pk) +
+                ". <br> Date created: " +
+                str(PhotoView.get_photo(request, photo_pk).time_created) + ".</h2>"
+            )
+
 
     @staticmethod
     def get_all_images(request):
