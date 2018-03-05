@@ -20,7 +20,7 @@ class UserView(View):
     def register(request, photo_base64):
         """
         on create - last_activated is the current time.
-        :param uphoto: url (base64)
+        :param photo_base64: base64 value of image
         :return: None
         """
         img = Photo(
@@ -65,8 +65,7 @@ class UserView(View):
         :return: All users in a json
         :rtype: JsonResponse
         """
-        users = User.objects.all().values('photo', 'time_created',
-                                          'last_active')
+        users = User.objects.all().values('photo', 'time_created')
         users = list(users)
         response = JsonResponse(users, safe=False)
 
@@ -74,7 +73,10 @@ class UserView(View):
 
     @staticmethod
     def get_user(request, pk_num):
-        return User.objects.get(pk=pk_num)
+        user = User.objects.get(pk=pk_num).values('photo', 'time_created')
+        response = JsonResponse(user, safe=False)
+
+        return response
 
     @staticmethod
     def get_random_user(request, my_user_pk):
@@ -93,7 +95,6 @@ class UserView(View):
             user_pk = final_user.pk
 
         return UserView.get_user(request, user_pk)
-
 
 
 class PhotoView(View):
@@ -126,12 +127,11 @@ class PhotoView(View):
 
     @staticmethod
     def details_photo(request, photo_pk):
-            my_http = HttpResponse(
-                "<h2>Details for Photo number: " + str(photo_pk) +
-                ". <br> Date created: " +
-                str(PhotoView.get_photo(request, photo_pk).time_created) + ".</h2>"
-            )
-
+        return HttpResponse(
+            "<h2>Details for Photo number: " + str(photo_pk) +
+            ". <br> Date created: " +
+            str(PhotoView.get_photo(request, photo_pk).time_created) + ".</h2>"
+        )
 
     @staticmethod
     def get_all_images(request):
@@ -153,7 +153,8 @@ class MessageView(View):
     """
 
     @staticmethod
-    def create_new_message(request, sender_pk, reciever_pk, photo_pk, text_str):
+    def create_new_message(request, sender_pk, reciever_pk, photo_pk,
+                           text_str):
         msg = Message(
             sender=UserView.get_user(request, sender_pk),
             reciever=UserView.get_user(request, reciever_pk),
@@ -173,11 +174,17 @@ class MessageView(View):
 
     @staticmethod
     def get_messages(request, user_id, friend_id):
-        msg_list = Message.object.all()
+        msg_list = Message.object.all().values('sender', 'receiver',
+                                               'content_photo', 'content_text',
+                                               'send_time')
         msgs_list_final = []
         for message in msg_list:
-            if user_id == message.sender.id and friend_id == message.receiver.id or \
-                                    user_id == message.reciever.id and friend_id == \
-                                    message.sender.id:
+            if (user_id == message.sender.id
+                and friend_id == message.receiver.id) \
+                    or (user_id == message.reciever.id
+                        and friend_id == message.sender.id):
                 msgs_list_final.append(message)
-        return msgs_list_final
+
+        response = JsonResponse(msgs_list_final, safe=False)
+
+        return response
