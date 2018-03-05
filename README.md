@@ -35,3 +35,14 @@ C:\Users\user\Projects\BackEnd>Scripts\activate
 As you can see, in both unix and windows, after activated venv there will be brackets with the name
 of the folder in which you are in. that tells you that you are currently working from the venv on this folder.
 
+## macOS Instructions
+To run the django server you'll need an sql support on your machine.
+To do so, you should install [Homebrew](https://brew.sh).
+
+After installing Homebrew, you should install `mysql`:
+```
+brew update
+brew install mysql
+```
+
+Then, follow the instructions to use the virtual environment.
