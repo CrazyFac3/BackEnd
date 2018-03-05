@@ -5,6 +5,7 @@ from django.views import View
 from .models import *
 from django.utils import timezone
 from random import randint
+import json
 
 
 def index(request):
@@ -38,6 +39,17 @@ class UserView(View):
 
         return HttpResponse("User created. PK of user: {0}. PK of photo: {1}".
                             format(str(new_user.pk), str(img.pk)))
+
+    @staticmethod
+    def register_with_json(request, json_string):
+        """
+        on create - last_activated is the current time.
+        :param json_string: json holding image
+        :return: None
+        """
+
+        json_obj = json.loads(json_string)
+        UserView.register(request, json_obj['photo'])
 
     @staticmethod
     def display_user(request, user_pk):
@@ -163,6 +175,15 @@ class MessageView(View):
             send_time=timezone.now()
         )
         msg.save()
+
+    @staticmethod
+    def create_new_message_with_json(request, json_string):
+        json_obj = json.loads(json_string)
+
+        MessageView.create_new_message(request, json_obj['sender_pk'],
+                                       json_obj[
+                                           'reciever_pk', json_obj['photo_pk'],
+                                           json_obj['photo_pk']])
 
     @staticmethod
     def get_all_messages(request):
