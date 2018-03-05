@@ -165,11 +165,11 @@ class MessageView(View):
     """
 
     @staticmethod
-    def create_new_message(request, sender_pk, reciever_pk, photo_pk,
+    def create_new_message(request, sender_pk, receiver_pk, photo_pk,
                            text_str):
         msg = Message(
             sender=UserView.get_user(request, sender_pk),
-            reciever=UserView.get_user(request, reciever_pk),
+            receiver=UserView.get_user(request, receiver_pk),
             content_photo=PhotoView.get_photo(request, photo_pk),
             content_text=text_str,  # emojis...
             send_time=timezone.now()
@@ -182,7 +182,7 @@ class MessageView(View):
 
         MessageView.create_new_message(request, json_obj['sender_pk'],
                                        json_obj[
-                                           'reciever_pk', json_obj['photo_pk'],
+                                           'receiver_pk', json_obj['photo_pk'],
                                            json_obj['photo_pk']])
 
     @staticmethod
@@ -202,7 +202,7 @@ class MessageView(View):
         for message in msg_list:
             if (user_id == message.sender.id
                 and friend_id == message.receiver.id) \
-                    or (user_id == message.reciever.id
+                    or (user_id == message.receiver.id
                         and friend_id == message.sender.id):
                 msgs_list_final.append(message)
 
