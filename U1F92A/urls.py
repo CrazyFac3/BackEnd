@@ -47,4 +47,24 @@ urlpatterns = [
         name="get_all_users"
     ),
 
+    # /U1F92A/User/GetJson/user_pk/
+    path(
+        'User/GetJson/<int:pk_num>/',
+        views.UserView.get_user,
+        name="get_user"
+    ),
+
+    # /U1F92A/User/RegisterJson/json_string/
+    path(
+        'User/RegisterJson/<path:json_string>/',
+        views.UserView.register_with_json,
+        name="register_with_json"
+    ),
+
+    # /U1F92A/Photo/CreateJson/json_string/
+    path(
+        'Photo/CreateJson/<path:json_string>/',
+        views.PhotoView.upload_img_json,
+        name="upload_img_json"
+    ),
 ]

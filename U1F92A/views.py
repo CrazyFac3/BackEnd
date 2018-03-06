@@ -49,7 +49,7 @@ class UserView(View):
         """
 
         json_obj = json.loads(json_string)
-        UserView.register(request, json_obj['photo'])
+        return UserView.register(request, json_obj['photo'])
 
     @staticmethod
     def display_user(request, user_pk):
@@ -77,7 +77,7 @@ class UserView(View):
         :return: All users in a json
         :rtype: JsonResponse
         """
-        users = User.objects.all().values('photo', 'time_created')
+        users = User.objects.all().values('photo', 'time_created', 'pk')
         users = list(users)
         response = JsonResponse(users, safe=False)
 
@@ -85,10 +85,16 @@ class UserView(View):
 
     @staticmethod
     def get_user(request, pk_num):
-        user = User.objects.get(pk=pk_num).values('photo', 'time_created')
-        response = JsonResponse(user, safe=False)
+        # user = User.objects.get(pk=pk_num).values('photo', 'time_created')
+        users = User.objects.all().values('photo', 'time_created', 'pk')
+        users = list(users)
+        for user in users:
+            if user['pk'] == pk_num:
+                return JsonResponse(user, safe=False)
 
-        return response
+
+        # response = JsonResponse(user, safe=False)
+        # return response
 
     @staticmethod
     def get_random_user(request, my_user_pk):
@@ -126,6 +132,11 @@ class PhotoView(View):
         )
         img.save()
         return HttpResponse("created!")
+
+    @staticmethod
+    def upload_img_json(request, json_string):
+        json_obj = json.loads(json_string)
+        return PhotoView.upload_img(request, json_obj['photo'])
 
     @staticmethod
     def display_all_photos(request):
