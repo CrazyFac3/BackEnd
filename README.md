@@ -18,6 +18,8 @@ activation for linux:
 activation for windows:
 `Scripts\activate.bat`
 
+Don't forget to donwnload all of the requirments (example for windows):
+`pip install -r requirements.txt`
 
 If you want for example to run manage.py on **Unix**:
 ```
