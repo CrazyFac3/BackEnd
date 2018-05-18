@@ -4,8 +4,10 @@ from django.http import JsonResponse
 from django.views import View
 from .models import *
 from django.utils import timezone
-from random import randint
+import random
 import json
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
@@ -40,25 +42,28 @@ class UserView(View):
         return HttpResponse("User created. PK of user: {0}. PK of photo: {1}".
                             format(str(new_user.pk), str(img.pk)))
 
-    @staticmethod
-    def register_with_json(request, json_string):
+    @csrf_exempt
+    @require_http_methods(["GET", "POST"])
+    # @staticmethod
+    def register_with_json(request):
         """
         on create - last_activated is the current time.
         :param json_string: json holding image
         :return: None
         """
-
-        json_obj = json.loads(json_string)
-        return UserView.register(request, json_obj['photo'])
+        body_unicode = request.body
+        body = json.loads(body_unicode)
+        content = body['photo']
+        return UserView.register(request, content)
 
     @staticmethod
     def display_user(request, user_pk):
+        my_user = UserView.get_user_json(request, user_pk)
         return HttpResponse(
             "<h2>Details for User number: " + str(user_pk) +
             ". <br> Date created: " +
-            str(UserView.get_user(request, user_pk).time_created) +
-            '</h2><br><img src="' + UserView.get_user(request, user_pk).photo.
-            base64 + '"/>.'
+            str(my_user["time_created"]) +
+            '</h2><br><img src="' + my_user['photo'] + '"/>.'
         )
 
     @staticmethod
@@ -77,6 +82,11 @@ class UserView(View):
         :return: All users in a json
         :rtype: JsonResponse
         """
+
+        # json_users = []
+        # for user in User.objects.all():
+        #     json_users.append(UserView.get_user(request, user.pk))
+
         users = User.objects.all().values('photo', 'time_created', 'pk')
         users = list(users)
         response = JsonResponse(users, safe=False)
@@ -84,20 +94,28 @@ class UserView(View):
         return response
 
     @staticmethod
-    def get_user(request, pk_num):
+    def get_user_json(request, pk_num):
         # user = User.objects.get(pk=pk_num).values('photo', 'time_created')
-        users = User.objects.all().values('photo', 'time_created', 'pk')
-        users = list(users)
-        for user in users:
-            if user['pk'] == pk_num:
-                return JsonResponse(user, safe=False)
+        # users = User.objects.all().values('photo', 'time_created', 'pk')
+        # users = list(users)
+        # for user in users:
+        #     if user['pk'] == pk_num:
+        #         return JsonResponse(user, safe=False)
 
+        user = User.objects.get(pk=pk_num)
+        user_json = {
+            'photo': user.photo.base64,
+            'time_created': user.time_created,
+            'pk': user.pk
+        }
+
+        return user_json
 
         # response = JsonResponse(user, safe=False)
         # return response
 
     @staticmethod
-    def get_random_user(request, my_user_pk):
+    def get_random_user(request):
         """
         get a random user
         :param request: the Get request
@@ -105,14 +123,8 @@ class UserView(View):
         :return: User
         """
         all_users = User.objects.all()
-        len_users = len(all_users)
-        user_pk = my_user_pk
-
-        while user_pk == my_user_pk:
-            final_user = all_users[randint(len_users)]
-            user_pk = final_user.pk
-
-        return UserView.get_user(request, user_pk)
+        my_user = random.choice(all_users)
+        return JsonResponse(UserView.get_user_json(request, my_user.pk))
 
 
 class PhotoView(View):
@@ -122,23 +134,36 @@ class PhotoView(View):
 
     @staticmethod
     def get_photo(request, img_pk):
-        return Photo.objects.get(pk=img_pk)
+        photo = Photo.objects.get(pk=img_pk)
+        photo_json = {
+            'base64': photo.base64,
+            'time_created': photo.time_created,
+            'pk': photo.pk
+        }
+
+        return photo_json
 
     @staticmethod
-    def upload_img(request, photo_base64):
+    @csrf_exempt
+    def upload_img(request):
+        body_unicode = request.body
+        body = json.loads(body_unicode)
+        content = body['photo']
+
         img = Photo(
-            base64=photo_base64,
+            base64=content,
             time_created=timezone.now()
         )
         img.save()
         return HttpResponse("created!")
 
-    @staticmethod
-    def upload_img_json(request, json_string):
-        json_obj = json.loads(json_string)
-        return PhotoView.upload_img(request, json_obj['photo'])
+    # @staticmethod
+    # def upload_img_json(request):
+    #     json_obj = json.loads(request.splitlines()[-1])
+    #     return PhotoView.upload_img(request, json_obj['photo'])
 
     @staticmethod
+    @csrf_exempt
     def display_all_photos(request):
         all_photos = Photo.objects.all()
         html = ''
@@ -153,7 +178,7 @@ class PhotoView(View):
         return HttpResponse(
             "<h2>Details for Photo number: " + str(photo_pk) +
             ". <br> Date created: " +
-            str(PhotoView.get_photo(request, photo_pk).time_created) + ".</h2>"
+            str(PhotoView.get_photo(request, photo_pk)["time_created"]) + ".</h2>"
         )
 
     @staticmethod
@@ -162,8 +187,7 @@ class PhotoView(View):
         :return: All users in a json
         :rtype: JsonResponse
         """
-        images = Photo.objects.all().values('photo', 'time_created',
-                                            'last_active')
+        images = Photo.objects.all().values('base64', 'time_created', 'pk')
         images = list(images)
         response = JsonResponse(images, safe=False)
 
@@ -179,8 +203,8 @@ class MessageView(View):
     def create_new_message(request, sender_pk, receiver_pk, photo_pk,
                            text_str):
         msg = Message(
-            sender=UserView.get_user(request, sender_pk),
-            receiver=UserView.get_user(request, receiver_pk),
+            sender=UserView.get_user_json(request, sender_pk),
+            receiver=UserView.get_user_json(request, receiver_pk),
             content_photo=PhotoView.get_photo(request, photo_pk),
             content_text=text_str,  # emojis...
             send_time=timezone.now()

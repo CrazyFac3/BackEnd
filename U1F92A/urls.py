@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.urls import path
 from . import views
 
@@ -20,11 +21,11 @@ urlpatterns = [
     ),
 
     # /U1F92A/Photo/photo_base64  --> upload a new image to the database.
-    path(
-        'Photo/<path:photo_base64>',
-        views.PhotoView.upload_img,
-        name="upload_img"
-    ),
+    # path(
+    #     'Photo/<path:photo_base64>',
+    #     views.PhotoView.upload_img,
+    #     name="upload_img"
+    # ),
 
     # /U1F92A/User/Register/photo_base64
     path(
@@ -42,7 +43,7 @@ urlpatterns = [
 
     # /U1F92A/User/  --> gives all users in a json.
     path(
-        'User/',
+        'Users/',
         views.UserView.get_all_users,
         name="get_all_users"
     ),
@@ -50,21 +51,43 @@ urlpatterns = [
     # /U1F92A/User/GetJson/user_pk/
     path(
         'User/GetJson/<int:pk_num>/',
-        views.UserView.get_user,
+        lambda request, pk_num: JsonResponse(views.UserView.get_user_json(request, pk_num)),
         name="get_user"
     ),
 
-    # /U1F92A/User/RegisterJson/json_string/
+    # /U1F92A/User/RegisterJson/
     path(
-        'User/RegisterJson/<path:json_string>/',
+        'User/RegisterJson/',
         views.UserView.register_with_json,
         name="register_with_json"
+
     ),
 
-    # /U1F92A/Photo/CreateJson/json_string/
+    # /U1F92A/Photo/UploadImg/
     path(
-        'Photo/CreateJson/<path:json_string>/',
-        views.PhotoView.upload_img_json,
-        name="upload_img_json"
+        'Photo/UploadImg/',
+        views.PhotoView.upload_img,
+        name="upload_img"
     ),
+
+    # /U1F92A/User/Random/
+    path(
+        'User/Random/',
+        views.UserView.get_random_user,
+        name="get_random_user"
+    ),
+
+    # /U1F92A/GetPhotoJson/<photo_pk>/
+    path(
+        'GetPhotoJson/<int:img_pk>/',
+        lambda request, img_pk: JsonResponse(views.PhotoView.get_photo(request, img_pk)),
+        name="get_photo"
+    ),
+
+    # /U1F92A/Photos
+    path(
+        'Photos/',
+        views.PhotoView.get_all_images,
+        name="get_all_images"
+    )
 ]
