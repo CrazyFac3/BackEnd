@@ -89,5 +89,28 @@ urlpatterns = [
         'Photos/',
         views.PhotoView.get_all_images,
         name="get_all_images"
+    ),
+
+    # /U1F92A/Messages/
+    path(
+        'Messages/',
+        views.MessageView.get_all_messages,
+        name="get_all_messages"
+    ),
+
+    # /U1F92A/CreateMessage/
+    path(
+        'CreateMessage/',
+        views.MessageView.create_new_message,
+        name="create_new_message"
+    ),
+
+    #U1F92A/GetMessage/
+    path(
+        'GetMessage/',
+        views.MessageView.get_message,
+        name="get_message"
     )
+
+
 ]

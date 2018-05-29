@@ -200,40 +200,69 @@ class MessageView(View):
     """
 
     @staticmethod
-    def create_new_message(request, sender_pk, receiver_pk, photo_pk,
-                           text_str):
+    @csrf_exempt
+    def create_new_message(request):
+
+        body_unicode = request.body
+        body = json.loads(body_unicode)
+
         msg = Message(
-            sender=UserView.get_user_json(request, sender_pk),
-            receiver=UserView.get_user_json(request, receiver_pk),
-            content_photo=PhotoView.get_photo(request, photo_pk),
-            content_text=text_str,  # emojis...
+            sender=User.objects.get(pk=int(body['sender_pk'])),
+            receiver=User.objects.get(pk=int(body['receiver_pk'])),
+            content_photo=Photo.objects.get(pk=int(body['photo_pk'])),
+            content_text=body['content_text'],  # emojis...
             send_time=timezone.now()
         )
         msg.save()
 
-    @staticmethod
-    def create_new_message_with_json(request, json_string):
-        json_obj = json.loads(json_string)
+        return HttpResponse("Created!")
 
-        MessageView.create_new_message(request, json_obj['sender_pk'],
-                                       json_obj[
-                                           'receiver_pk', json_obj['photo_pk'],
-                                           json_obj['photo_pk']])
+    # @staticmethod
+    # def create_new_message_with_json(request, json_string):
+    #     json_obj = json.loads(json_string)
+    #
+    #     MessageView.create_new_message(request, json_obj['sender_pk'],
+    #                                    json_obj[
+    #                                        'receiver_pk', json_obj['photo_pk'],
+    #                                        json_obj['photo_pk']])
 
     @staticmethod
     def get_all_messages(request):
-        return Message.objects.all()
+        messages = Message.objects.all().values('sender', 'receiver',
+                                                'content_photo', 'content_text'
+                                                , 'send_time')
+        messages = list(messages)
+        response = JsonResponse(messages, safe=False)
+
+        return response
 
     @staticmethod
     def get_message(requset, pk_msg):
-        return Message.objects.get(pk=pk_msg)
+        msg = Message.objects.get(pk=pk_msg)
+
+        msg_json = {
+            'sender': msg.sender.pk,
+            'receiver': msg.receiver.pk,
+            'content_photo': msg.content_photo.base64,
+            'content_text': msg.content_text,
+            'send_time': msg.send_time,
+            'pk': msg.pk
+        }
+
+        return msg_json
 
     @staticmethod
-    def get_messages(request, user_id, friend_id):
+    def get_messages(request):
+        params = request.GET
+        user_id = params['user_id']
+        friend_id = params['friend_id']
+
         msg_list = Message.object.all().values('sender', 'receiver',
                                                'content_photo', 'content_text',
                                                'send_time')
+
         msgs_list_final = []
+
         for message in msg_list:
             if (user_id == message.sender.id
                 and friend_id == message.receiver.id) \
