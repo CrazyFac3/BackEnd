@@ -114,9 +114,9 @@ urlpatterns = [
         name="get_message"
     ),
 
-    # U1F92A/GetConve/
+    # U1F92A/GetConversation/
     path(
-        'GetConve/',
+        'GetConversation/',
         views.MessageView.get_messages,
         name="get_messages"
     )
