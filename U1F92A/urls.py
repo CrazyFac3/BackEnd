@@ -41,7 +41,7 @@ urlpatterns = [
         name="display_user"
     ),
 
-    # /U1F92A/User/  --> gives all users in a json.
+    # /U1F92A/Users/  --> gives all users in a json.
     path(
         'Users/',
         views.UserView.get_all_users,
@@ -110,6 +110,13 @@ urlpatterns = [
         'GetMessage/',
         views.MessageView.get_message,
         name="get_message"
+    ),
+
+    #U1F92A/GetConve/
+    path(
+        'GetConve/',
+        views.MessageView.get_messages,
+        name="get_messages"
     )
 
 

@@ -206,10 +206,14 @@ class MessageView(View):
         body_unicode = request.body
         body = json.loads(body_unicode)
 
+        photo = None
+        if body['photo_pk']:
+            photo = Photo.objects.get(pk=int(body['photo_pk']))
+
         msg = Message(
             sender=User.objects.get(pk=int(body['sender_pk'])),
             receiver=User.objects.get(pk=int(body['receiver_pk'])),
-            content_photo=Photo.objects.get(pk=int(body['photo_pk'])),
+            content_photo=photo,
             content_text=body['content_text'],  # emojis...
             send_time=timezone.now()
         )
@@ -257,19 +261,27 @@ class MessageView(View):
         user_id = params['user_id']
         friend_id = params['friend_id']
 
-        msg_list = Message.object.all().values('sender', 'receiver',
+        msg_list = Message.objects.all().values('sender',
+                                                'receiver',
                                                'content_photo', 'content_text',
-                                               'send_time')
+                                               'send_time', 'id')
 
         msgs_list_final = []
 
         for message in msg_list:
-            if (user_id == message.sender.id
-                and friend_id == message.receiver.id) \
-                    or (user_id == message.receiver.id
-                        and friend_id == message.sender.id):
+            print(message['receiver'])
+            print(message['sender'])
+            print(user_id)
+            print(friend_id)
+
+            if (int(user_id) == int(message['sender'])
+                and int(friend_id) == int(message['receiver'])) \
+                    or (int(user_id) == int(message['receiver'])
+                        and int(friend_id) == int(message['sender'])):
                 msgs_list_final.append(message)
 
-        response = JsonResponse(msgs_list_final, safe=False)
+        msgs_dict = {key: value for key, value in enumerate(msgs_list_final, 1)}
+
+        response = JsonResponse(msgs_dict, safe=False)
 
         return response
