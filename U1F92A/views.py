@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.views import View
@@ -221,15 +220,6 @@ class MessageView(View):
 
         return HttpResponse("Created!")
 
-    # @staticmethod
-    # def create_new_message_with_json(request, json_string):
-    #     json_obj = json.loads(json_string)
-    #
-    #     MessageView.create_new_message(request, json_obj['sender_pk'],
-    #                                    json_obj[
-    #                                        'receiver_pk', json_obj['photo_pk'],
-    #                                        json_obj['photo_pk']])
-
     @staticmethod
     def get_all_messages(request):
         messages = Message.objects.all().values('sender', 'receiver',
@@ -263,8 +253,10 @@ class MessageView(View):
 
         msg_list = Message.objects.all().values('sender',
                                                 'receiver',
-                                               'content_photo', 'content_text',
-                                               'send_time', 'id')
+                                                'content_photo',
+                                                'content_text',
+                                                'send_time',
+                                                'id')
 
         msgs_list_final = []
 
@@ -280,7 +272,9 @@ class MessageView(View):
                         and int(friend_id) == int(message['sender'])):
                 msgs_list_final.append(message)
 
-        msgs_dict = {key: value for key, value in enumerate(msgs_list_final, 1)}
+        msgs_dict = {
+            key: value for key, value in enumerate(msgs_list_final, 1)
+        }
 
         response = JsonResponse(msgs_dict, safe=False)
 

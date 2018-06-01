@@ -51,7 +51,8 @@ urlpatterns = [
     # /U1F92A/User/GetJson/user_pk/
     path(
         'User/GetJson/<int:pk_num>/',
-        lambda request, pk_num: JsonResponse(views.UserView.get_user_json(request, pk_num)),
+        lambda request, pk_num: JsonResponse(
+            views.UserView.get_user_json(request, pk_num)),
         name="get_user"
     ),
 
@@ -80,7 +81,8 @@ urlpatterns = [
     # /U1F92A/GetPhotoJson/<photo_pk>/
     path(
         'GetPhotoJson/<int:img_pk>/',
-        lambda request, img_pk: JsonResponse(views.PhotoView.get_photo(request, img_pk)),
+        lambda request, img_pk: JsonResponse(
+            views.PhotoView.get_photo(request, img_pk)),
         name="get_photo"
     ),
 
@@ -105,19 +107,17 @@ urlpatterns = [
         name="create_new_message"
     ),
 
-    #U1F92A/GetMessage/
+    # U1F92A/GetMessage/
     path(
         'GetMessage/',
         views.MessageView.get_message,
         name="get_message"
     ),
 
-    #U1F92A/GetConve/
+    # U1F92A/GetConve/
     path(
         'GetConve/',
         views.MessageView.get_messages,
         name="get_messages"
     )
-
-
 ]
