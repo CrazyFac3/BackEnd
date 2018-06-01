@@ -21,7 +21,7 @@ class UserView(View):
     @staticmethod
     def register(request, photo_base64):
         """
-        on create - last_activated is the current time.
+        On create - last_activated is the current time.
         :param photo_base64: base64 value of image
         :return: None
         """
@@ -43,11 +43,9 @@ class UserView(View):
 
     @csrf_exempt
     @require_http_methods(["GET", "POST"])
-    # @staticmethod
     def register_with_json(request):
         """
-        on create - last_activated is the current time.
-        :param json_string: json holding image
+        On create - last_activated is the current time.
         :return: None
         """
         body_unicode = request.body
@@ -68,7 +66,7 @@ class UserView(View):
     @staticmethod
     def update_last_active(request, pk_num):
         """
-        updating the last_active user attribute
+        Updating the last_active user attribute
         :param pk_num: int (id/pk number)
         :return: None
         """
@@ -82,10 +80,6 @@ class UserView(View):
         :rtype: JsonResponse
         """
 
-        # json_users = []
-        # for user in User.objects.all():
-        #     json_users.append(UserView.get_user(request, user.pk))
-
         users = User.objects.all().values('photo', 'time_created', 'pk')
         users = list(users)
         response = JsonResponse(users, safe=False)
@@ -94,13 +88,6 @@ class UserView(View):
 
     @staticmethod
     def get_user_json(request, pk_num):
-        # user = User.objects.get(pk=pk_num).values('photo', 'time_created')
-        # users = User.objects.all().values('photo', 'time_created', 'pk')
-        # users = list(users)
-        # for user in users:
-        #     if user['pk'] == pk_num:
-        #         return JsonResponse(user, safe=False)
-
         user = User.objects.get(pk=pk_num)
         user_json = {
             'photo': user.photo.base64,
@@ -109,9 +96,6 @@ class UserView(View):
         }
 
         return user_json
-
-        # response = JsonResponse(user, safe=False)
-        # return response
 
     @staticmethod
     def get_random_user(request):
@@ -156,11 +140,6 @@ class PhotoView(View):
         img.save()
         return HttpResponse("created!")
 
-    # @staticmethod
-    # def upload_img_json(request):
-    #     json_obj = json.loads(request.splitlines()[-1])
-    #     return PhotoView.upload_img(request, json_obj['photo'])
-
     @staticmethod
     @csrf_exempt
     def display_all_photos(request):
@@ -177,7 +156,8 @@ class PhotoView(View):
         return HttpResponse(
             "<h2>Details for Photo number: " + str(photo_pk) +
             ". <br> Date created: " +
-            str(PhotoView.get_photo(request, photo_pk)["time_created"]) + ".</h2>"
+            str(PhotoView.get_photo(request, photo_pk)["time_created"]) +
+            ".</h2>"
         )
 
     @staticmethod
@@ -223,8 +203,8 @@ class MessageView(View):
     @staticmethod
     def get_all_messages(request):
         messages = Message.objects.all().values('sender', 'receiver',
-                                                'content_photo', 'content_text'
-                                                , 'send_time')
+                                                'content_photo',
+                                                'content_text', 'send_time')
         messages = list(messages)
         response = JsonResponse(messages, safe=False)
 
@@ -248,8 +228,8 @@ class MessageView(View):
     @staticmethod
     def get_messages(request):
         params = request.GET
-        user_id = params['user_id']
-        friend_id = params['friend_id']
+        user_id = int(params['user_id'])
+        friend_id = int(params['friend_id'])
 
         msg_list = Message.objects.all().values('sender',
                                                 'receiver',
@@ -260,16 +240,12 @@ class MessageView(View):
 
         msgs_list_final = []
 
+        # Each user is either sender or receiver
         for message in msg_list:
-            print(message['receiver'])
-            print(message['sender'])
-            print(user_id)
-            print(friend_id)
-
-            if (int(user_id) == int(message['sender'])
-                and int(friend_id) == int(message['receiver'])) \
-                    or (int(user_id) == int(message['receiver'])
-                        and int(friend_id) == int(message['sender'])):
+            if (user_id == int(message['sender']) and friend_id == int(
+                    message['receiver'])) or (
+                    user_id == int(message['receiver']) and friend_id == int(
+                    message['sender'])):
                 msgs_list_final.append(message)
 
         msgs_dict = {
