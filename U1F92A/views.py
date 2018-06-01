@@ -1,12 +1,14 @@
+import json
+import random
+
 from django.http import HttpResponse
 from django.http import JsonResponse
-from django.views import View
-from .models import *
 from django.utils import timezone
-import random
-import json
-from django.views.decorators.http import require_http_methods
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+
+from .models import *
 
 
 def index(request):
