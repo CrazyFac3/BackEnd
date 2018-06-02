@@ -21,13 +21,6 @@ urlpatterns = [
         name="details_photo"
     ),
 
-    # /U1F92A/User/Register/photo_base64
-    path(
-        'User/Register/<path:photo_base64>',
-        views.UserView.register,
-        name="register"
-    ),
-
     # /U1F92A/User/user_pk/
     path(
         'User/<int:user_pk>/',
@@ -50,12 +43,11 @@ urlpatterns = [
         name="get_user"
     ),
 
-    # /U1F92A/User/RegisterJson/
+    # /U1F92A/User/Register/
     path(
-        'User/RegisterJson/',
-        views.UserView.register_with_json,
-        name="register_with_json"
-
+        'User/Register/',
+        views.UserView.register,
+        name="register"
     ),
 
     # /U1F92A/Photo/UploadImg/

@@ -20,15 +20,21 @@ class UserView(View):
     user management
     """
 
-    @staticmethod
-    def register(request, photo_base64):
+    @csrf_exempt
+    @require_http_methods(["GET", "POST"])
+    def register(request):
         """
         On create - last_activated is the current time.
-        :param photo_base64: base64 value of image
-        :return: None
+
+        :return: A json response containing new user's pk and its photo's pk
+        :rtype: JsonResponse
         """
+
+        body = json.loads(request.body)
+        content = body['photo']
+
         img = Photo(
-            base64=photo_base64,
+            base64=content,
             time_created=timezone.now()
         )
         img.save()
@@ -40,20 +46,7 @@ class UserView(View):
         )
         new_user.save()
 
-        return HttpResponse("User created. PK of user: {0}. PK of photo: {1}".
-                            format(str(new_user.pk), str(img.pk)))
-
-    @csrf_exempt
-    @require_http_methods(["GET", "POST"])
-    def register_with_json(request):
-        """
-        On create - last_activated is the current time.
-        :return: None
-        """
-        body_unicode = request.body
-        body = json.loads(body_unicode)
-        content = body['photo']
-        return UserView.register(request, content)
+        return JsonResponse({'user_pk': new_user.pk, 'photo_pk': img.pk})
 
     @staticmethod
     def display_user(request, user_pk):
