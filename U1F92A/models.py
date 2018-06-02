@@ -2,6 +2,9 @@ from django.db import models
 
 
 class Photo(models.Model):
+    """
+    TODO: Change ASAP, the image should NOT be saved as base64
+    """
     base64 = models.CharField(max_length=10000)
     time_created = models.DateTimeField('Date created')
 
