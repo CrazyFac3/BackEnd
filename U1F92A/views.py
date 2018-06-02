@@ -1,12 +1,11 @@
 import json
 import random
-
-from django.http import HttpResponse
-from django.http import JsonResponse
-from django.utils import timezone
 from django.views import View
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.http import HttpResponse, JsonResponse, HttpResponseServerError
+
 
 from .models import *
 
@@ -93,7 +92,7 @@ class UserView(View):
         return user_json
 
     @staticmethod
-    def get_random_user(request):
+    def get_random_user(request, user_pk):
         """
         get a random user
         :param request: the Get request
@@ -102,7 +101,16 @@ class UserView(View):
         """
         all_users = User.objects.all()
         my_user = random.choice(all_users)
-        return JsonResponse(UserView.get_user_json(request, my_user.pk))
+        attempts = 10   # Number of attempts to find a user
+        while my_user.pk != user_pk and attempts != 0:
+            my_user = random.choice(all_users)
+            attempts -= 1
+
+        if attempts == 0:
+            # In case tried and did not manage to find a random user
+            return HttpResponseServerError('Failed finding random user!')
+        else:
+            return JsonResponse(UserView.get_user_json(request, my_user.pk))
 
 
 class PhotoView(View):

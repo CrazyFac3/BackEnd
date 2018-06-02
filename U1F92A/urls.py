@@ -59,7 +59,7 @@ urlpatterns = [
 
     # /U1F92A/User/Random/
     path(
-        'User/Random/',
+        'User/Random/<int:user_pk>/',
         views.UserView.get_random_user,
         name="get_random_user"
     ),
