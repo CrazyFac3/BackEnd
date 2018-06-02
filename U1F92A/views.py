@@ -4,7 +4,8 @@ from django.views import View
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from django.http import HttpResponse, JsonResponse, HttpResponseServerError
+from django.http import HttpResponse, JsonResponse, HttpResponseServerError, \
+    HttpResponseBadRequest
 
 
 from .models import *
@@ -92,13 +93,20 @@ class UserView(View):
         return user_json
 
     @staticmethod
-    def get_random_user(request, user_pk):
+    def get_random_user(request):
         """
         get a random user
         :param request: the Get request
         :param my_user_pk: the user requesting pk
         :return: User
         """
+        if not request.GET.get('user_pk'):
+            return HttpResponseBadRequest('Bad Request! the url must contain a query parameter of user_pk!')
+        try:
+            user_pk = int(request.GET.get('user_pk'))
+        except ValueError:
+            return HttpResponseBadRequest('Bad Request! user_pk must be an integer!')
+
         all_users = User.objects.all()
         my_user = random.choice(all_users)
         attempts = 10   # Number of attempts to find a user
