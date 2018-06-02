@@ -9,35 +9,35 @@ urlpatterns = [
 
     # /U1F92A/Photo/  --> displays all the photos. press to get more info.
     path(
-        'Photo/',
+        'photo/',
         views.PhotoView.display_all_photos,
         name="display_all_photos"
     ),
 
     # /U1F92A/Photo/325/  --> displays info about a specific photo.
     path(
-        'Photo/<int:photo_pk>/',
+        'photo/<int:photo_pk>/',
         views.PhotoView.details_photo,
         name="details_photo"
     ),
 
     # /U1F92A/User/user_pk/
     path(
-        'User/<int:user_pk>/',
+        'user/<int:user_pk>/',
         views.UserView.display_user,
         name="display_user"
     ),
 
     # /U1F92A/Users/  --> gives all users in a json.
     path(
-        'Users/',
+        'users/',
         views.UserView.get_all_users,
         name="get_all_users"
     ),
 
     # /U1F92A/User/GetJson/user_pk/
     path(
-        'User/GetJson/<int:pk_num>/',
+        'user/get_json/<int:pk_num>/',
         lambda request, pk_num: JsonResponse(
             views.UserView.get_user_json(request, pk_num)),
         name="get_user"
@@ -45,14 +45,14 @@ urlpatterns = [
 
     # /U1F92A/User/Register/
     path(
-        'User/Register/',
+        'user/register/',
         views.UserView.register,
         name="register"
     ),
 
     # /U1F92A/Photo/UploadImg/
     path(
-        'Photo/UploadImg/',
+        'photo/uploadImg/',
         views.PhotoView.upload_img,
         name="upload_img"
     ),
@@ -66,7 +66,7 @@ urlpatterns = [
 
     # /U1F92A/GetPhotoJson/<photo_pk>/
     path(
-        'GetPhotoJson/<int:img_pk>/',
+        'get_photo_json/<int:img_pk>/',
         lambda request, img_pk: JsonResponse(
             views.PhotoView.get_photo(request, img_pk)),
         name="get_photo"
@@ -74,35 +74,35 @@ urlpatterns = [
 
     # /U1F92A/Photos
     path(
-        'Photos/',
+        'photos/',
         views.PhotoView.get_all_images,
         name="get_all_images"
     ),
 
     # /U1F92A/Messages/
     path(
-        'Messages/',
+        'messages/',
         views.MessageView.get_all_messages,
         name="get_all_messages"
     ),
 
     # /U1F92A/CreateMessage/
     path(
-        'CreateMessage/',
+        'create_message/',
         views.MessageView.create_new_message,
         name="create_new_message"
     ),
 
     # U1F92A/GetMessage/
     path(
-        'GetMessage/',
+        'get_message/',
         views.MessageView.get_message,
         name="get_message"
     ),
 
     # U1F92A/GetConversation/
     path(
-        'GetConversation/',
+        'get_conversation/',
         views.MessageView.get_messages,
         name="get_messages"
     )
