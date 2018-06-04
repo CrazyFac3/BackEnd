@@ -98,28 +98,30 @@ class UserView(View):
         """
         get a random user
         :param request: the Get request
-        :param my_user_pk: the user requesting pk
         :return: User
         """
         if not request.GET.get('user_pk'):
-            return HttpResponseBadRequest('Bad Request! the url must contain a query parameter of user_pk!')
+            return HttpResponseBadRequest('Bad Request! the url must contain '
+                                          'a query parameter of user_pk!')
         try:
             user_pk = int(request.GET.get('user_pk'))
         except ValueError:
-            return HttpResponseBadRequest('Bad Request! user_pk must be an integer!')
+            return HttpResponseBadRequest(
+                'Bad Request! user_pk must be an integer!')
 
         all_users = User.objects.all()
-        my_user = random.choice(all_users)
-        attempts = 10   # Number of attempts to find a user
-        while my_user.pk != user_pk and attempts != 0:
-            my_user = random.choice(all_users)
+        random_user = random.choice(all_users)
+        attempts = 10  # Number of attempts to find a user
+        while random_user.pk == user_pk and attempts != 0:
+            random_user = random.choice(all_users)
             attempts -= 1
 
         if attempts == 0:
             # In case tried and did not manage to find a random user
             return HttpResponseServerError('Failed finding random user!')
         else:
-            return JsonResponse(UserView.get_user_json(request, my_user.pk))
+            return JsonResponse(
+                UserView.get_user_json(request, random_user.pk))
 
 
 class PhotoView(View):
@@ -257,7 +259,7 @@ class MessageView(View):
             if (user_id == int(message['sender']) and friend_id == int(
                     message['receiver'])) or (
                     user_id == int(message['receiver']) and friend_id == int(
-                    message['sender'])):
+                message['sender'])):
                 msgs_list_final.append(message)
 
         msgs_dict = {
