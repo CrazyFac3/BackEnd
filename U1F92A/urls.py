@@ -57,9 +57,9 @@ urlpatterns = [
         name="upload_img"
     ),
 
-    # /U1F92A/User/Random/
+    # /U1F92A/User/Random
     path(
-        'User/Random/',
+        'User/Random',
         views.UserView.get_random_user,
         name="get_random_user"
     ),

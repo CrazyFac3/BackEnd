@@ -93,6 +93,7 @@ class UserView(View):
         return user_json
 
     @staticmethod
+    @csrf_exempt
     def get_random_user(request):
         """
         get a random user
