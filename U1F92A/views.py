@@ -204,7 +204,7 @@ class MessageView(View):
             photo = Photo.objects.get(pk=int(body['photo_pk']))
 
         if not photo:
-            photo = Photo(base64='', time_crated=timezone.now())
+            photo = Photo(base64='', time_created=timezone.now())
 
         msg = Message(
             sender=User.objects.get(pk=int(body['sender_pk'])),
