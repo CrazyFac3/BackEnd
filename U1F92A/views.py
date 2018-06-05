@@ -203,13 +203,21 @@ class MessageView(View):
         if 'photo_pk' in body.keys():
             photo = Photo.objects.get(pk=int(body['photo_pk']))
 
-        msg = Message(
-            sender=User.objects.get(pk=int(body['sender_pk'])),
-            receiver=User.objects.get(pk=int(body['receiver_pk'])),
-            content_photo=photo,
-            content_text=body['content_text'],  # emojis...
-            send_time=timezone.now()
-        )
+        if not photo:
+            msg = Message(
+                sender=User.objects.get(pk=int(body['sender_pk'])),
+                receiver=User.objects.get(pk=int(body['receiver_pk'])),
+                content_text=body['content_text'],  # emojis...
+                send_time=timezone.now()
+            )
+        else:
+            msg = Message(
+                sender=User.objects.get(pk=int(body['sender_pk'])),
+                receiver=User.objects.get(pk=int(body['receiver_pk'])),
+                content_text=body['content_text'],  # emojis...
+                content_photo = photo,
+                send_time=timezone.now()
+            )
         msg.save()
 
         return HttpResponse("Created!")
