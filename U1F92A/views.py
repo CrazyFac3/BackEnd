@@ -118,7 +118,10 @@ class UserView(View):
 
         if attempts == 0:
             # In case tried and did not manage to find a random user
-            return HttpResponseServerError('Failed finding random user!')
+            # Return a user with pk = 0, which means not found
+            return JsonResponse({'photo': '',
+                                 'time_created': str(timezone.now()),
+                                 'pk': 0})
         else:
             return JsonResponse(
                 UserView.get_user_json(request, random_user.pk))
