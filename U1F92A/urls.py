@@ -52,14 +52,14 @@ urlpatterns = [
 
     # /U1F92A/Photo/UploadImg/
     path(
-        'photo/uploadImg/',
+        'photo/upload_img/',
         views.PhotoView.upload_img,
         name="upload_img"
     ),
 
     # /U1F92A/User/Random
     path(
-        'User/Random',
+        'user/random',
         views.UserView.get_random_user,
         name="get_random_user"
     ),

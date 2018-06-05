@@ -200,7 +200,7 @@ class MessageView(View):
         body = json.loads(body_unicode)
 
         photo = None
-        if body['photo_pk']:
+        if body['photo_pk'] != -1:
             photo = Photo.objects.get(pk=int(body['photo_pk']))
 
         msg = Message(
