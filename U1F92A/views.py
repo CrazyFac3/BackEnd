@@ -50,12 +50,13 @@ class UserView(View):
 
     @staticmethod
     def display_user(request, user_pk):
-        my_user = UserView.get_user_json(request, user_pk)
+        user = User.objects.get(pk=user_pk)
+
         return HttpResponse(
-            "<h2>Details for User number: " + str(user_pk) +
-            ". <br> Date created: " +
-            str(my_user["time_created"]) +
-            '</h2><br><img src="' + my_user['photo'] + '"/>.'
+            "<h2>Details for User number: {0}.<br>"
+            "Date created: {1}</h2><br>"
+            '<img src="{2}"/>.'.format(user_pk, user.time_created,
+                                       user.photo.base64)
         )
 
     @staticmethod
@@ -85,7 +86,7 @@ class UserView(View):
     def get_user_json(request, pk_num):
         user = User.objects.get(pk=pk_num)
         user_json = {
-            'photo': user.photo.base64,
+            'photo': user.photo.pk,
             'time_created': user.time_created,
             'pk': user.pk
         }
@@ -218,7 +219,7 @@ class MessageView(View):
                 sender=User.objects.get(pk=int(body['sender_pk'])),
                 receiver=User.objects.get(pk=int(body['receiver_pk'])),
                 content_text=body['content_text'],  # emojis...
-                content_photo = photo,
+                content_photo=photo,
                 send_time=timezone.now()
             )
         msg.save()
@@ -270,7 +271,7 @@ class MessageView(View):
             if (user_id == int(message['sender']) and friend_id == int(
                     message['receiver'])) or (
                     user_id == int(message['receiver']) and friend_id == int(
-                message['sender'])):
+                    message['sender'])):
                 msgs_list_final.append(message)
 
         msgs_dict = {
