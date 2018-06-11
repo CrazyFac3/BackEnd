@@ -20,6 +20,7 @@ class UserView(View):
     user management
     """
 
+    @staticmethod
     @csrf_exempt
     @require_http_methods(["GET", "POST"])
     def register(request):
