@@ -74,8 +74,11 @@ class UserView(View):
             # In case user_pk is not numeric
             return HttpResponseBadRequest("user_pk must be an integer!")
 
+        print('1')
         user = User.objects.get(pk=user_pk)
+        print('2')
         user.delete()   # Delete the user and release resources
+        return HttpResponse('User deleted!')
 
 
     @staticmethod
@@ -220,8 +223,7 @@ class PhotoView(View):
         html = ''
         for photo in all_photos:
             url = str(photo.pk) + '/'
-            html += '<a href="' + url + '"><img src="' + photo.base64 + \
-                    '"></img></a><br>'
+            html += '<a href={}><img src=data:image/jpeg;base64,{}></img></a>'.format(url, photo.base64)
         return HttpResponse(html)
 
     @staticmethod

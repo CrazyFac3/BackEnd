@@ -22,6 +22,10 @@ class User(models.Model):
     def __str__(self):
         return str(self.pk)
 
+    def delete(self):
+        self.photo.delete()
+        return super(User, self).delete()
+
 
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -43,11 +47,11 @@ def delete_user_image(sender, instance, **kwargs):
     """
     Releases the resources that the users used. his Image is deleted and
     all of his messages.
+
     :param sender:
     :param instance:
     :param kwargs:
     :return:
     """
-    instance.photo.delete()     # delete the image.
     for message in instance.message_set.all():
         message.delete()

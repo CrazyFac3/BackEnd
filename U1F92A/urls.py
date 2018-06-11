@@ -112,5 +112,10 @@ urlpatterns = [
         'get_conversation/',
         views.MessageView.get_messages,
         name="get_messages"
-    )
+    ),
+
+    # U1F92A/delete_user/ ---> Parameters: user_pk (int)
+    path(
+        'delete_user/', views.UserView.delete_user, name='delete_user'
+    ),
 ]
