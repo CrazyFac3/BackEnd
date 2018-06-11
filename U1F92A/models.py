@@ -41,6 +41,9 @@ class Message(models.Model):
         else:
             return "Text Message " + str(self.pk)
 
+    def delete(self):
+        self.content_photo.delete()
+        return super(Message, self).delete()
 
 @receiver(pre_delete, sender=User)
 def delete_user_image(sender, instance, **kwargs):
