@@ -172,14 +172,16 @@ class UserView(View):
 
         # Add each pk the user is chatting with
         for message in msg_list:
-            if message.sender.pk == user_pk \
-                    and message.receiver.pk not in users:
-                users.append(message.receiver.pk)
-            elif message.receiver.pk == user_pk \
-                    and message.sender.pk not in users:
-                users.append(message.sender.pk)
+            if message.sender.pk == user_pk and message.receiver.pk not in \
+                    [user['user_pk'] for user in users]:
+                users.append({'user_pk': message.receiver.pk,
+                              'photo_pk': message.receiver.photo.pk})
+            elif message.receiver.pk == user_pk and message.sender.pk not in \
+                    [user['user_pk'] for user in users]:
+                users.append({'user_pk': message.sender.pk,
+                              'photo_pk': message.sender.photo.pk})
 
-        users.sort()
+        users.sort(key=lambda user: user['user_pk'])
 
         return JsonResponse({'users': users})
 
