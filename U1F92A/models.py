@@ -1,4 +1,6 @@
 from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import pre_delete
 
 
 class Photo(models.Model):
@@ -13,7 +15,7 @@ class Photo(models.Model):
 
 
 class User(models.Model):
-    photo = models.ForeignKey(Photo, on_delete=models.CASCADE)
+    photo = models.OneToOneField(Photo, on_delete=models.CASCADE)
     time_created = models.DateTimeField('date created')
     last_active = models.DateTimeField('last active date')
 
@@ -35,4 +37,17 @@ class Message(models.Model):
         else:
             return "Text Message " + str(self.pk)
 
-# final
+
+@receiver(pre_delete, sender=User)
+def delete_user_image(sender, instance, **kwargs):
+    """
+    Releases the resources that the users used. his Image is deleted and
+    all of his messages.
+    :param sender:
+    :param instance:
+    :param kwargs:
+    :return:
+    """
+    instance.photo.delete()     # delete the image.
+    for message in instance.message_set.all():
+        message.delete()

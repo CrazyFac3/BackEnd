@@ -61,6 +61,24 @@ class UserView(View):
         )
 
     @staticmethod
+    def delete_user(request):
+        """
+        Deletes a user by it's id (primary key)
+        :param request: Http Request
+        :return: None
+        """
+        user_pk = 0
+        try:
+            user_pk = request.GET['user_pk']
+        except ValueError:
+            # In case user_pk is not numeric
+            return HttpResponseBadRequest("user_pk must be an integer!")
+
+        user = User.objects.get(pk=user_pk)
+        user.delete()   # Delete the user and release resources
+
+
+    @staticmethod
     def update_last_active(request, pk_num):
         """
         Updating the last_active user attribute
