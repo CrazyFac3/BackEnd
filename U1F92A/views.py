@@ -130,22 +130,24 @@ class UserView(View):
             return HttpResponseBadRequest(
                 'Bad Request! user_pk must be an integer!')
 
-        all_users = User.objects.all()
-        random_user = random.choice(all_users)
-        attempts = 10  # Number of attempts to find a user
-        while random_user.pk == user_pk and attempts != 0:
+        try:
+            all_users = User.objects.all()
             random_user = random.choice(all_users)
-            attempts -= 1
+            attempts = 10  # Number of attempts to find a user
+            while random_user.pk == user_pk and attempts != 0:
+                random_user = random.choice(all_users)
+                attempts -= 1
 
-        if attempts == 0:
+            if attempts == 0:
+                raise IndexError
+        except IndexError:
             # In case tried and did not manage to find a random user
             # Return a user with pk = 0, which means not found
             return JsonResponse({'photo': '',
                                  'time_created': str(timezone.now()),
                                  'pk': 0})
-        else:
-            return JsonResponse(
-                UserView.get_user_json(request, random_user.pk))
+        return JsonResponse(
+            UserView.get_user_json(request, random_user.pk))
 
     @staticmethod
     @csrf_exempt
