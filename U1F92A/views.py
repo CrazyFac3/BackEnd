@@ -74,9 +74,7 @@ class UserView(View):
             # In case user_pk is not numeric
             return HttpResponseBadRequest("user_pk must be an integer!")
 
-        print('1')
         user = User.objects.get(pk=user_pk)
-        print('2')
         user.delete()   # Delete the user and release resources
         return HttpResponse('User deleted!')
 
