@@ -127,6 +127,42 @@ class UserView(View):
             return JsonResponse(
                 UserView.get_user_json(request, random_user.pk))
 
+    @staticmethod
+    @csrf_exempt
+    def get_friends(request):
+        """
+        Get pk's of users who chat with a certain user
+
+        :return: A list of users' pk's.
+        :rtype: JsonResponse
+        """
+
+        if not request.GET.get('user_pk'):
+            return HttpResponseBadRequest('Bad Request! the url must contain '
+                                          'a query parameter of user_pk!')
+        try:
+            user_pk = int(request.GET.get('user_pk'))
+        except ValueError:
+            return HttpResponseBadRequest(
+                'Bad Request! user_pk must be an integer!')
+
+        users = []
+
+        msg_list = Message.objects.all()
+
+        # Add each pk the user is chatting with
+        for message in msg_list:
+            if message.sender.pk == user_pk \
+                    and message.receiver.pk not in users:
+                users.append(message.receiver.pk)
+            elif message.receiver.pk == user_pk \
+                    and message.sender.pk not in users:
+                users.append(message.sender.pk)
+
+        users.sort()
+
+        return JsonResponse({'users': users})
+
 
 class PhotoView(View):
     """

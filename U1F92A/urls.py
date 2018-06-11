@@ -57,11 +57,18 @@ urlpatterns = [
         name="upload_img"
     ),
 
-    # /U1F92A/User/Random
+    # /U1F92A/user/random
     path(
         'user/random',
         views.UserView.get_random_user,
         name="get_random_user"
+    ),
+
+    # /U1F92A/user/friends
+    path(
+        'user/friends',
+        views.UserView.get_friends,
+        name="get_friends"
     ),
 
     # /U1F92A/GetPhotoJson/<photo_pk>/
