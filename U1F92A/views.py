@@ -224,17 +224,16 @@ class PhotoView(View):
         all_photos = Photo.objects.all()
         html = ''
         for photo in all_photos:
-            url = str(photo.pk) + '/'
-            html += '<a href={}><img src=data:image/jpeg;base64,{}></img></a>'.format(url, photo.base64)
+            html += '<img src={}></img>'.format(photo.base64)
         return HttpResponse(html)
 
     @staticmethod
     def details_photo(request, photo_pk):
+        photo = Photo.objects.get(pk=photo_pk)
         return HttpResponse(
             "<h2>Details for Photo number: " + str(photo_pk) +
-            ". <br> Date created: " +
-            str(PhotoView.get_photo(request, photo_pk)["time_created"]) +
-            ".</h2>"
+            ". <br> Date created: " + str(photo.time_created) + '.</h2>' +
+            '<img src={}></img>'.format(photo.base64)
         )
 
     @staticmethod
