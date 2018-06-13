@@ -25,7 +25,8 @@ SECRET_KEY = '^qenpy@c)%$a27s+uem$@rfnsppcljfu@eacx#s_!gwy9@5j+b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.43.169', '127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1',
+                 'crazyface-env.4fpcmyq8xy.us-east-2.elasticbeanstalk.com']
 
 
 # Application definition
