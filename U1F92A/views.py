@@ -15,20 +15,6 @@ from .models import *
 # todo: check get_friends function
 
 
-def index(request):
-    def filter_api_function(cls, func):
-        return (callable(getattr(cls, func)) and
-                not func.startswith('_') and
-                func not in dir(View))
-
-    methods = {
-        cls.__name__[:-4]: [f for f in dir(cls) if filter_api_function(cls, f)]
-        for cls in (UserView, MessageView, PhotoView)
-    }
-
-    return render(request, "api_list.html", {'methods': methods})
-
-
 class UserView(View):
     """
     user management
