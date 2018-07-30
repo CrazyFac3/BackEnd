@@ -25,7 +25,7 @@ urlpatterns = [
     ),
 
     path(
-        'photo/<int:img_pk>/json',
+        'photo/<int:photo_pk>/json',
         views.PhotoView.get_photo_json,
     ),
 
@@ -59,7 +59,7 @@ urlpatterns = [
     ),
 
     path(
-        'message/conversation/<int:user_id>/<int:friend_id>',
+        'message/conversation/<int:user_pk>/<int:friend_pk>',
         views.MessageView.get_conversation,
     ),
 

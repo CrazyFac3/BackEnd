@@ -191,8 +191,8 @@ class PhotoView(View):
         })
 
     @staticmethod
-    def get_photo_json(request, img_pk):
-        photo = Photo.objects.get(pk=img_pk)
+    def get_photo_json(request, photo_pk):
+        photo = Photo.objects.get(pk=photo_pk)
         photo_json = {
             'base64': photo.base64,
             'time_created': photo.time_created,
@@ -277,10 +277,10 @@ class MessageView(View):
         })
 
     @staticmethod
-    def get_conversation(request, user_id, friend_id):
+    def get_conversation(request, user_pk, friend_pk):
         msg_list = Message.objects.filter(
-            Q(sender=user_id, receiver=friend_id) |
-            Q(sender=friend_id, receiver=user_id)
+            Q(sender=user_pk, receiver=friend_pk) |
+            Q(sender=friend_pk, receiver=user_pk)
         ).order_by('send_time').values()
 
         return JsonResponse(list(msg_list), safe=False)
