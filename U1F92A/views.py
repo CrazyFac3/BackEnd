@@ -113,26 +113,23 @@ class UserView(View):
         :return: A list of users' pk's.
         :rtype: JsonResponse
         """
+        msg_list = Message.objects.filter(Q(sender=user_pk) |
+                                          Q(receiver=user_pk))
 
-        users = []
-
-        msg_list = Message.objects.all()
+        users = {}
 
         # Add each pk the user is chatting with
         for message in msg_list:
-            msg_receiver = message.receiver.pk
-            msg_sender = message.sender.pk
+            friend_id, entity = message.sender.pk, 'sender'
+            if message.sender.pk == user_pk:
+                friend_id, entity = message.receiver.pk, 'receiver'
 
-            if (msg_sender == user_pk and
-                    msg_receiver not in [user['user_pk'] for user in users]):
+            users[friend_id] = getattr(message, entity).photo.pk
 
-                users.append({'user_pk': msg_receiver,
-                              'photo_pk': message.receiver.photo.pk})
-
-            elif (msg_receiver == user_pk and
-                  msg_sender not in [user['user_pk'] for user in users]):
-                users.append({'user_pk': msg_sender,
-                              'photo_pk': message.sender.photo.pk})
+        users = [
+            dict(user_pk=upk, photo_pk=ppk)
+            for upk, ppk in users.items()
+        ]
 
         users.sort(key=lambda user: user['user_pk'])
         return JsonResponse(users, safe=False)
