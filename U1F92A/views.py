@@ -2,17 +2,27 @@ import json
 import random
 from django.views import View
 from django.utils import timezone
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from django.http import HttpResponse, JsonResponse, HttpResponseServerError, \
-    HttpResponseBadRequest
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 
 
 from .models import *
 
 
 def index(request):
-    return HttpResponse("Home Page")
+    def filter_api_function(cls, func):
+        return (callable(getattr(cls, func)) and
+                not func.startswith('_') and
+                func not in dir(View))
+
+    methods = {
+        cls.__name__[:-4]: [f for f in dir(cls) if filter_api_function(cls, f)]
+        for cls in (UserView, MessageView, PhotoView)
+    }
+
+    return render(request, "api_list.html", {'methods': methods})
 
 
 class UserView(View):
@@ -192,9 +202,31 @@ class PhotoView(View):
     """
     photo management
     """
+    @staticmethod
+    @csrf_exempt
+    def get_all_images_html(request):
+        all_photos = Photo.objects.all()
+        return render(request, 'show_images.html', {'images': all_photos})
 
     @staticmethod
-    def get_photo(request, img_pk):
+    def get_all_images_json(request):
+        """
+        :return: All users in a json
+        :rtype: JsonResponse
+        """
+        all_photos = Photo.objects.all().values('base64', 'time_created', 'pk')
+        return JsonResponse(list(all_photos), safe=False)
+
+    @staticmethod
+    def get_photo_html(request, photo_pk):
+        photo = Photo.objects.get(pk=photo_pk)
+        return render(request, 'detail_image.html', {
+            'photo_number': photo_pk,
+            'photo': photo
+        })
+
+    @staticmethod
+    def get_photo_json(request, img_pk):
         photo = Photo.objects.get(pk=img_pk)
         photo_json = {
             'base64': photo.base64,
@@ -202,51 +234,26 @@ class PhotoView(View):
             'pk': photo.pk
         }
 
-        return photo_json
+        return JsonResponse(photo_json)
 
     @staticmethod
     @csrf_exempt
+    @require_http_methods(["PUT"])
     def upload_img(request):
-        body_unicode = request.body
-        body = json.loads(body_unicode)
-        content = body['photo']
-
         img = Photo(
-            base64=content,
+            base64=str(request.body)[2:-1],
             time_created=timezone.now()
         )
         img.save()
-        return HttpResponse("created!")
+
+        return JsonResponse({'success': 'ok'})
 
     @staticmethod
     @csrf_exempt
-    def display_all_photos(request):
-        all_photos = Photo.objects.all()
-        html = ''
-        for photo in all_photos:
-            html += '<img src={}></img>'.format(photo.base64)
-        return HttpResponse(html)
-
-    @staticmethod
-    def details_photo(request, photo_pk):
-        photo = Photo.objects.get(pk=photo_pk)
-        return HttpResponse(
-            "<h2>Details for Photo number: " + str(photo_pk) +
-            ". <br> Date created: " + str(photo.time_created) + '.</h2>' +
-            '<img src={}></img>'.format(photo.base64)
-        )
-
-    @staticmethod
-    def get_all_images(request):
-        """
-        :return: All users in a json
-        :rtype: JsonResponse
-        """
-        images = Photo.objects.all().values('base64', 'time_created', 'pk')
-        images = list(images)
-        response = JsonResponse(images, safe=False)
-
-        return response
+    @require_http_methods(["DELETE"])
+    def delete_img(request, photo_pk):
+        Photo.objects.filter(pk=photo_pk).delete()
+        return JsonResponse({'success': 'ok'})
 
 
 class MessageView(View):

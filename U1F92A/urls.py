@@ -1,3 +1,4 @@
+from django.conf.urls import url
 from django.http import JsonResponse
 from django.urls import path
 
@@ -7,19 +8,47 @@ urlpatterns = [
     # /U1F92A/
     path('', views.index, name='index'),
 
-    # /U1F92A/Photo/  --> displays all the photos. press to get more info.
+    # #########################################################################
+    #                                   PHOTO                                 #
+    # #########################################################################
+
+    # GET /U1F92A/Photo/  --> displays all the photos. press to get more info.
     path(
-        'photo/',
-        views.PhotoView.display_all_photos,
-        name="display_all_photos"
+        'photo/all',
+        views.PhotoView.get_all_images_html,
+    ),
+
+    path(
+        'photo/all/json',
+        views.PhotoView.get_all_images_json,
     ),
 
     # /U1F92A/Photo/325/  --> displays info about a specific photo.
     path(
         'photo/<int:photo_pk>/',
-        views.PhotoView.details_photo,
-        name="details_photo"
+        views.PhotoView.get_photo_html,
     ),
+
+    # /U1F92A/GetPhotoJson/<photo_pk>/
+    path(
+        'photo/<int:img_pk>/json',
+        views.PhotoView.get_photo_json,
+    ),
+
+    # /U1F92A/Photo/UploadImg/
+    path(
+        'photo/upload',
+        views.PhotoView.upload_img,
+    ),
+
+    path(
+        'photo/delete/<int:photo_pk>',
+        views.PhotoView.delete_img,
+    ),
+
+    # #########################################################################
+    #                                    USER                                 #
+    # #########################################################################
 
     # /U1F92A/User/user_pk/
     path(
@@ -50,13 +79,6 @@ urlpatterns = [
         name="register"
     ),
 
-    # /U1F92A/Photo/UploadImg/
-    path(
-        'photo/upload_img/',
-        views.PhotoView.upload_img,
-        name="upload_img"
-    ),
-
     # /U1F92A/user/random
     path(
         'user/random',
@@ -71,20 +93,14 @@ urlpatterns = [
         name="get_friends"
     ),
 
-    # /U1F92A/GetPhotoJson/<photo_pk>/
+    # U1F92A/delete_user/ ---> Parameters: user_pk (int)
     path(
-        'get_photo_json/<int:img_pk>/',
-        lambda request, img_pk: JsonResponse(
-            views.PhotoView.get_photo(request, img_pk)),
-        name="get_photo"
+        'delete_user/', views.UserView.delete_user, name='delete_user'
     ),
 
-    # /U1F92A/Photos
-    path(
-        'photos/',
-        views.PhotoView.get_all_images,
-        name="get_all_images"
-    ),
+    # #########################################################################
+    #                                   MESSAGE                               #
+    # #########################################################################
 
     # /U1F92A/Messages/
     path(
@@ -112,10 +128,5 @@ urlpatterns = [
         'get_conversation/',
         views.MessageView.get_messages,
         name="get_messages"
-    ),
-
-    # U1F92A/delete_user/ ---> Parameters: user_pk (int)
-    path(
-        'delete_user/', views.UserView.delete_user, name='delete_user'
     ),
 ]
