@@ -41,10 +41,10 @@
     </style>
   </head>
   <body>
-    <h1>Details for Photo #{{ photo_number }}</h1>
+    <h1>Details for {{ entity }} #{{ number }}</h1>
     <div style="text-align: left; width: 50%; margin-left: auto; margin-right: auto;">
-      Date created: {{ photo.time_created }}
-      <img src="{{ photo.base64 }}" />
+      Date created: {{ time_created }}
+      <img src="{{ photo_base64 }}" />
     </div>
   </body>
 </html>
